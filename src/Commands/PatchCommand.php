@@ -135,7 +135,9 @@ class PatchCommand extends Command
      */
     protected function runUp($file, int $batch): void
     {
-        $patch = $this->patcher->resolve($name = $this->patcher->getPatchName($file));
+        $patch = $this->patcher->resolve($file);
+
+        $name = $this->patcher->getPatchName($file);
 
         $this->line("<comment>Running Patch:</comment> {$name}");
 

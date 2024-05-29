@@ -13,12 +13,16 @@ class PatchTest extends TestCase
             database_path('patches/2021_01_01_000000_my_first_patch.php'),
             file_get_contents(__DIR__.'/patches/2021_01_01_000000_my_first_patch.php')
         );
+        file_put_contents(
+            database_path('patches/2021_01_03_000000_my_third_patch.php'),
+            file_get_contents(__DIR__.'/patches/2021_01_03_000000_my_third_patch.php')
+        );
 
         $this->assertDatabaseCount(config('laravel-patches.table_name'), 0);
 
         $this->artisan('patch')->run();
 
-        $this->assertDatabaseCount(config('laravel-patches.table_name'), 1);
+        $this->assertDatabaseCount(config('laravel-patches.table_name'), 2);
 
         $this->assertDatabaseHas(config('laravel-patches.table_name'), [
             'patch' => '2021_01_01_000000_my_first_patch',

@@ -2,36 +2,20 @@
 
 use Rappasoft\LaravelPatches\Patch;
 
-class {{ class }} extends Patch
-{
+return new class extends Patch {
     /**
      * Run the patch.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        info('Hello!');
-
-        // Useful methods
-//        $this->log('Hello');
-//        $this->call('my-command', ['my-option' => 'my-value']);
-//        $this->seed('PatchV1_0_0Seeder');
-//        $this->truncate('my-table');
+        //
     }
 
     /**
      * Reverse the patch.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        info('Goodbye :(');
-
-        // Useful methods
-//        $this->call('my-command', ['my-option' => 'my-value']);
-//        $this->seed('PatchV1_0_0Seeder');
-//        $this->truncate('my-table');
+        //
     }
-}
+};

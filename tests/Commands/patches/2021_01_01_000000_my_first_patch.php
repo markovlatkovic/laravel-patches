@@ -9,7 +9,7 @@ class MyFirstPatch extends Patch
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         $this->log('Hello First!');
     }
@@ -19,7 +19,7 @@ class MyFirstPatch extends Patch
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         \Log::info('Goodbye First');
     }

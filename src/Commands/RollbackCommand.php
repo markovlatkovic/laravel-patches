@@ -147,7 +147,9 @@ class RollbackCommand extends Command
      */
     protected function runDown($file, object $patch): void
     {
-        $instance = $this->patcher->resolve($name = $this->patcher->getPatchName($file));
+        $instance = $this->patcher->resolve($file);
+
+        $name = $this->patcher->getPatchName($file);
 
         $this->line("<comment>Rolling back:</comment> {$name}");
 

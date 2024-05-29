@@ -2,6 +2,7 @@
 
 namespace Rappasoft\LaravelPatches;
 
+use Error;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
@@ -144,9 +145,14 @@ class Patcher
      */
     public function resolve(string $file): object
     {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+        $name = $this->getPatchName($file);
+        $class = Str::studly(implode('_', array_slice(explode('_', $name), 4)));
 
-        return new $class;
+        try {
+            return new $class;
+        } catch (Error $e) {
+            return require $file;
+        }
     }
 
     /**

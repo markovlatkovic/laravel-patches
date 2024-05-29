@@ -41,8 +41,8 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        include_once __DIR__.'/../database/migrations/create_patches_table.php.stub';
-        (new \CreatePatchesTable())->up();
+        $migration = include __DIR__.'/../database/migrations/create_patches_table.php.stub';
+        $migration->up();
     }
 
     /**
