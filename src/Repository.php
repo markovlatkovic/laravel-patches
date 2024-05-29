@@ -16,7 +16,7 @@ class Repository
      *
      * @param  int  $steps
      *
-     * @return array
+     * @return Patch[]
      */
     public function getPatches(int $steps): array
     {
@@ -61,9 +61,7 @@ class Repository
      *
      * @param  string  $file
      * @param  int  $batch
-     * @param  array  $log
-     *
-     * @return void
+     * @param  string[]  $log
      */
     public function log(string $file, int $batch, array $log = []): void
     {
@@ -98,7 +96,7 @@ class Repository
     /**
      * Get the last patch batch number.
      *
-     * @return int
+     * @return int|null
      */
     public function getLastBatchNumber(): ?int
     {

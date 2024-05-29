@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Arr;
+use Rappasoft\LaravelPatches\Models\Patch;
 use Rappasoft\LaravelPatches\Patcher;
 use Rappasoft\LaravelPatches\Repository;
 
@@ -33,31 +34,14 @@ class RollbackCommand extends Command
     protected $description = 'Rollback the last patch';
 
     /**
-     * The patcher instance.
-     *
-     * @var Patcher
-     */
-    protected Patcher $patcher;
-
-    /**
-     * The repository instance.
-     *
-     * @var Repository
-     */
-    protected Repository $repository;
-
-    /**
      * PatchCommand constructor.
      *
      * @param  Patcher  $patcher
      * @param  Repository  $repository
      */
-    public function __construct(Patcher $patcher, Repository $repository)
+    public function __construct(protected Patcher $patcher, protected Repository $repository)
     {
         parent::__construct();
-
-        $this->patcher = $patcher;
-        $this->repository = $repository;
     }
 
     /**
@@ -80,7 +64,7 @@ class RollbackCommand extends Command
     /**
      * Rollback the appropriate patches
      *
-     * @return array
+     * @return string[]
      * @throws FileNotFoundException
      */
     protected function rollback(): array
@@ -99,20 +83,18 @@ class RollbackCommand extends Command
     /**
      * Decide which patch files to rollback and run their down methods
      *
-     * @param $patches
+     * @param  Patch[]  $patches
      *
-     * @return array
+     * @return string[]
      * @throws FileNotFoundException
      */
-    protected function rollbackPatches($patches): array
+    protected function rollbackPatches(array $patches): array
     {
         $rolledBack = [];
 
         $this->patcher->requireFiles($files = $this->patcher->getPatchFiles($this->patcher->getPatchPaths()));
 
         foreach ($patches as $patch) {
-            $patch = (object) $patch;
-
             if (! $file = Arr::get($files, $patch->patch)) {
                 $this->line("<fg=red>Patch not found:</> {$patch->patch}");
 
@@ -130,7 +112,7 @@ class RollbackCommand extends Command
     /**
      * Decide which patch files to choose for rollback based on passed in options
      *
-     * @return array
+     * @return Patch[]
      */
     protected function getPatchesForRollback(): array
     {
@@ -142,10 +124,10 @@ class RollbackCommand extends Command
     /**
      * Run the down method on the patch
      *
-     * @param $file
+     * @param  string  $file
      * @param  object  $patch
      */
-    protected function runDown($file, object $patch): void
+    protected function runDown(string $file, object $patch): void
     {
         $instance = $this->patcher->resolve($file);
 

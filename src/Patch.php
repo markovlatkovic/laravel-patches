@@ -13,19 +13,19 @@ use Illuminate\Support\Facades\DB;
 abstract class Patch
 {
     /**
-     * @var array
+     * @var string[]
      */
     public array $log = [];
 
     /**
      * Call an Artisan command
      *
-     * @param $command
+     * @param  string  $command
      * @param  array  $parameters
      *
      * @return int
      */
-    public function call($command, array $parameters = []): int
+    public function call(string $command, array $parameters = []): int
     {
         return Artisan::call($command, $parameters);
     }
@@ -45,7 +45,7 @@ abstract class Patch
     /**
      * Truncate a table by name
      *
-     * @param string $table
+     * @param  string  $table
      */
     public function truncate(string $table): void
     {
@@ -55,9 +55,9 @@ abstract class Patch
     /**
      * Add to the commands logged output
      *
-     * @param  string  $line
+     * @param string $line
      *
-     * @return $this
+     * @return Patch
      */
     public function log(string $line): Patch
     {
