@@ -2,6 +2,7 @@
 
 namespace Rappasoft\LaravelPatches\Tests;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Rappasoft\LaravelPatches\LaravelPatchesServiceProvider;
@@ -18,11 +19,11 @@ class TestCase extends Orchestra
     }
 
     /**
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      *
      * @return string[]
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             LaravelPatchesServiceProvider::class,
@@ -30,9 +31,9 @@ class TestCase extends Orchestra
     }
 
     /**
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      */
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
@@ -41,8 +42,8 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        include_once __DIR__.'/../database/migrations/create_patches_table.php.stub';
-        (new \CreatePatchesTable())->up();
+        $migration = include __DIR__.'/../database/migrations/create_patches_table.php.stub';
+        $migration->up();
     }
 
     /**

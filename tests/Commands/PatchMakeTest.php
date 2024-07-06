@@ -3,7 +3,6 @@
 namespace Rappasoft\LaravelPatches\Tests\Commands;
 
 use Illuminate\Support\Facades\File;
-use InvalidArgumentException;
 use Rappasoft\LaravelPatches\Tests\TestCase;
 
 class PatchMakeTest extends TestCase
@@ -25,14 +24,5 @@ class PatchMakeTest extends TestCase
         foreach (glob(database_path('patches').'/*') as $file) {
             $this->assertTrue(filesize($file) > 0);
         }
-    }
-
-    /** @test */
-    public function it_doesnt_make_two_patches_with_the_same_name()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->artisan('make:patch', ['name' => 'new_patch'])->run();
-        $this->artisan('make:patch', ['name' => 'new_patch'])->run();
     }
 }

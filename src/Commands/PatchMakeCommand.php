@@ -31,41 +31,12 @@ class PatchMakeCommand extends Command
      */
     protected $description = 'Create a patch file';
 
-    /**
-     * The patcher instance.
-     *
-     * @var Patcher
-     */
-    protected Patcher $patcher;
-
-    /**
-     * The Composer instance.
-     *
-     * @var Composer
-     */
-    protected Composer $composer;
-
-    /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected Filesystem $files;
-
-    /**
-     * Create a new command instance.
-     *
-     * @param  Patcher  $patcher
-     * @param  Composer  $composer
-     * @param  Filesystem  $files
-     */
-    public function __construct(Patcher $patcher, Composer $composer, Filesystem $files)
-    {
+    public function __construct(
+        protected Patcher $patcher,
+        protected Composer $composer,
+        protected Filesystem $files
+    ) {
         parent::__construct();
-
-        $this->patcher = $patcher;
-        $this->composer = $composer;
-        $this->files = $files;
     }
 
     /**
@@ -100,13 +71,13 @@ class PatchMakeCommand extends Command
     /**
      * Create the patch and return the path
      *
-     * @param $name
-     * @param $path
+     * @param  string $name
+     * @param  string $path
      *
      * @return string
      * @throws FileNotFoundException
      */
-    protected function create($name, $path): string
+    protected function create(string $name, string $path): string
     {
         $this->ensurePatchDoesntAlreadyExist($name);
 
@@ -124,11 +95,11 @@ class PatchMakeCommand extends Command
     /**
      * Make sure two patches with the same class name do not get created
      *
-     * @param $name
+     * @param  string $name
      *
      * @throws FileNotFoundException
      */
-    protected function ensurePatchDoesntAlreadyExist($name): void
+    protected function ensurePatchDoesntAlreadyExist(string $name): void
     {
         $patchesPath = $this->patcher->getPatchPath();
 
@@ -169,12 +140,12 @@ class PatchMakeCommand extends Command
     /**
      * Get the path of the file to be created
      *
-     * @param $name
-     * @param $path
+     * @param  string  $name
+     * @param  string  $path
      *
      * @return string
      */
-    protected function getPath($name, $path): string
+    protected function getPath(string $name, string $path): string
     {
         return $path.'/'.$this->getDatePrefix().'_'.$name.'.php';
     }
@@ -182,9 +153,9 @@ class PatchMakeCommand extends Command
     /**
      * Get the date prefix of the file
      *
-     * @return false|string
+     * @return string
      */
-    protected function getDatePrefix()
+    protected function getDatePrefix(): string
     {
         return date('Y_m_d_His');
     }
@@ -192,12 +163,12 @@ class PatchMakeCommand extends Command
     /**
      * Replace the placeholders in the stub with their actual data
      *
-     * @param $name
-     * @param $stub
+     * @param  string  $name
+     * @param  string  $stub
      *
-     * @return string|string[]
+     * @return string
      */
-    protected function populateStub($name, $stub)
+    protected function populateStub(string $name, string $stub): string
     {
         return str_replace('{{ class }}', $this->patcher->getClassName($name), $stub);
     }

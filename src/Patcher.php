@@ -2,6 +2,7 @@
 
 namespace Rappasoft\LaravelPatches;
 
+use Error;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
@@ -16,25 +17,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Patcher
 {
     /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected Filesystem $files;
-
-    /**
      * @var OutputInterface
      */
     protected OutputInterface $output;
 
-    /**
-     * Patcher constructor.
-     *
-     * @param  Filesystem  $files
-     */
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $files)
     {
-        $this->files = $files;
     }
 
     /**
@@ -63,7 +51,7 @@ class Patcher
     /**
      * Return the array of paths to look through for patches
      *
-     * @return array
+     * @return string[]
      */
     public function getPatchPaths(): array
     {
@@ -81,11 +69,11 @@ class Patcher
     }
 
     /**
-     * @param $paths
+     * @param  string[] $paths
      *
-     * @return array
+     * @return string[]
      */
-    public function getPatchFiles($paths): array
+    public function getPatchFiles(array $paths): array
     {
         return collect($paths)
             ->flatMap(fn ($path) => Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path.'/*_*.php'))
@@ -99,11 +87,11 @@ class Patcher
     /**
      * Get the ClassName
      *
-     * @param $name
+     * @param  string $name
      *
      * @return string
      */
-    public function getClassName($name): string
+    public function getClassName(string $name): string
     {
         return Str::studly($name);
     }
@@ -123,7 +111,7 @@ class Patcher
     /**
      * Require in all the patch files in a given path.
      *
-     * @param  array  $files
+     * @param  string[]  $files
      *
      * @return void
      * @throws FileNotFoundException
@@ -144,9 +132,14 @@ class Patcher
      */
     public function resolve(string $file): object
     {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+        $name = $this->getPatchName($file);
+        $class = Str::studly(implode('_', array_slice(explode('_', $name), 4)));
 
-        return new $class;
+        try {
+            return new $class;
+        } catch (Error $e) {
+            return require $file;
+        }
     }
 
     /**
@@ -155,7 +148,7 @@ class Patcher
      * @param  object  $patch
      * @param  string  $method
      *
-     * @return array
+     * @return string[]|null
      */
     public function runPatch(object $patch, string $method): ?array
     {

@@ -33,32 +33,9 @@ class PatchCommand extends Command
      */
     protected $description = 'Run any necessary patches';
 
-    /**
-     * The patcher instance.
-     *
-     * @var Patcher
-     */
-    protected Patcher $patcher;
-
-    /**
-     * The repository instance.
-     *
-     * @var Repository
-     */
-    protected Repository $repository;
-
-    /**
-     * PatchCommand constructor.
-     *
-     * @param  Patcher  $patcher
-     * @param  Repository  $repository
-     */
-    public function __construct(Patcher $patcher, Repository $repository)
+    public function __construct(protected Patcher $patcher, protected Repository $repository)
     {
         parent::__construct();
-
-        $this->patcher = $patcher;
-        $this->repository = $repository;
     }
 
     /**
@@ -91,10 +68,10 @@ class PatchCommand extends Command
     /**
      * Get the patch files that have not yet run.
      *
-     * @param  array  $files
-     * @param  array  $ran
+     * @param  string[]  $files
+     * @param  string[]  $ran
      *
-     * @return array
+     * @return string[]
      */
     protected function pendingPatches(array $files, array $ran): array
     {
@@ -106,7 +83,7 @@ class PatchCommand extends Command
     /**
      * Run pending patches
      *
-     * @param  array  $patches
+     * @param  string[]  $patches
      */
     protected function runPending(array $patches): void
     {
@@ -130,12 +107,14 @@ class PatchCommand extends Command
     /**
      * Run the up method on the patch
      *
-     * @param $file
+     * @param  string $file
      * @param  int  $batch
      */
-    protected function runUp($file, int $batch): void
+    protected function runUp(string $file, int $batch): void
     {
-        $patch = $this->patcher->resolve($name = $this->patcher->getPatchName($file));
+        $patch = $this->patcher->resolve($file);
+
+        $name = $this->patcher->getPatchName($file);
 
         $this->line("<comment>Running Patch:</comment> {$name}");
 
